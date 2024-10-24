@@ -18,8 +18,9 @@ import java.rmi.server.RemoteRef;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -29,10 +30,15 @@ public class UserController {
 
 
 
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody com.example.testingTask.RegisterRequest request){
-        userService.createUser(request.getUsername(), request.getPassword(), "ROLE_USER");
-        return ResponseEntity.ok("User registered succesfully");
+    public void registerUser(@RequestBody User user) {
+        String defaultRole = "USER";
+        userService.registerUser(user.getUsername(), user.getPassword(), defaultRole);
     }
 
     @PostMapping("/login")

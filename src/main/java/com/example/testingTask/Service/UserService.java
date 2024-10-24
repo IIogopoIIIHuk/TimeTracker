@@ -1,18 +1,10 @@
 package com.example.testingTask.Service;
 
-import com.example.testingTask.Project;
-import com.example.testingTask.Repo.ProjectRepository;
 import com.example.testingTask.Repo.UserRepository;
 import com.example.testingTask.User;
-import jakarta.persistence.AssociationOverride;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.core.SpringVersion;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 import java.util.Optional;
 
@@ -25,8 +17,10 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-    public User createUser(String username, String password, String role){
+    public User registerUser(String username, String password, String role) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new IllegalArgumentException("Username already exists.");
+        }
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
@@ -34,10 +28,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Optional<User> findByUsername(String username){
+    // Method to find a user by username
+    public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
-
-
 }
-
